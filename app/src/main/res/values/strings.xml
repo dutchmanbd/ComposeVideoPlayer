@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ComposeVideoPlayer</string>
+    <string name="play_previous">play previous</string>
+    <string name="rewind_5">rewind 10</string>
+    <string name="toggle_play">play</string>
+    <string name="forward_10">forward 10</string>
+    <string name="play_next">play next</string>
+    <string name="toggle_full_screen">full screen</string>
 </resources>
