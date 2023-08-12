@@ -1,6 +1,8 @@
 package com.dutch.composevideoplayer
 
 import android.net.Uri
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,7 +38,6 @@ class MainViewModel @Inject constructor(
     init {
         player.prepare()
     }
-
     fun addVideoUri(uri: Uri) {
         savedStateHandle["videoUris"] = videoUris.value + uri
         player.addMediaItem(MediaItem.fromUri(uri))

@@ -94,6 +94,13 @@ fun PlayerView(
             }
         }
 
+        LaunchedEffect(key1 = videoTimer) {
+            delay(1000)
+            videoTimer = playerWrapper.exoPlayer.contentPosition
+        }
+
+
+
         VideoPlayer(
             modifier = Modifier.fillMaxSize(),
             playerWrapper = playerWrapper,
@@ -120,10 +127,12 @@ fun PlayerView(
                     playerWrapper.exoPlayer.isPlaying -> {
                         playerWrapper.exoPlayer.pause()
                     }
+
                     playerWrapper.exoPlayer.isPlaying.not() && playbackState == STATE_ENDED -> {
                         playerWrapper.exoPlayer.seekTo(0, 0)
                         playerWrapper.exoPlayer.playWhenReady = true
                     }
+
                     else -> {
                         playerWrapper.exoPlayer.play()
                     }

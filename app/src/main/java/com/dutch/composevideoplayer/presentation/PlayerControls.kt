@@ -232,22 +232,43 @@ fun PlayerControls(
                         .padding(top = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .testTag("VideoTime")
-                            .padding(start = 16.dp)
-                            .animateEnterExit(
-                                enter = slideInVertically(
-                                    initialOffsetY = { fullHeight: Int -> fullHeight }
+                    Row {
+                        Text(
+                            modifier = Modifier
+                                .testTag("VideoTime")
+                                .padding(start = 16.dp)
+                                .animateEnterExit(
+                                    enter = slideInVertically(
+                                        initialOffsetY = { fullHeight: Int -> fullHeight }
+                                    ),
+                                    exit = slideOutVertically(
+                                        targetOffsetY = { fullHeight: Int -> fullHeight }
+                                    )
                                 ),
-                                exit = slideOutVertically(
-                                    targetOffsetY = { fullHeight: Int -> fullHeight }
-                                )
-                            ),
-                        text = duration.formatMinSec(),
-                        color = MaterialTheme.colors.onBackground,
-                        style = MaterialTheme.typography.subtitle2
-                    )
+                            text = timer.formatMinSec(),
+                            color = MaterialTheme.colors.onBackground,
+                            style = MaterialTheme.typography.subtitle2
+                        )
+
+                        Text(text = "/")
+
+                        Text(
+                            modifier = Modifier
+                                .testTag("VideoTime")
+                                .padding(start = 16.dp)
+                                .animateEnterExit(
+                                    enter = slideInVertically(
+                                        initialOffsetY = { fullHeight: Int -> fullHeight }
+                                    ),
+                                    exit = slideOutVertically(
+                                        targetOffsetY = { fullHeight: Int -> fullHeight }
+                                    )
+                                ),
+                            text = duration.formatMinSec(),
+                            color = MaterialTheme.colors.onBackground,
+                            style = MaterialTheme.typography.subtitle2
+                        )
+                    }
 
                     IconButton(
                         modifier = Modifier

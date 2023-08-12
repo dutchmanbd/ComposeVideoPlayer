@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposeVideoPlayerTheme {
                 val viewModel = hiltViewModel<MainViewModel>()
+
                 val videoItems by viewModel.videoItems.collectAsState()
                 val selectVideoLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.GetContent(),
@@ -69,78 +70,18 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                val playerWrapper = PlayerWrapper(viewModel.player)
+                val configuration = LocalConfiguration.current
+
+                var playingIndex by remember {
+                    mutableStateOf(0)
+                }
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    IconButton(onClick = {
-                        selectVideoLauncher.launch("video/*")
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.FileOpen,
-                            contentDescription = "Select Video"
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    IconButton(onClick = {
-                        activity.requestedOrientation = if (portrait.value) {
-                            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                        } else {
-                            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                        }
-
-                        // opposite the value of isPortrait
-                        portrait.value = !portrait.value
-                    }) {
-                        Icon(
-                            imageVector = if (portrait.value) Icons.Default.Landscape else Icons.Default.Portrait,
-                            contentDescription = "Select Video"
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    LazyColumn {
-                        items(videoItems) { item ->
-                            Text(
-                                text = item.name,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        viewModel.playVideo(item.contentUri)
-                                    }
-                                    .padding(16.dp)
-                            )
-                        }
-                    }
-
-//                    AndroidView(
-//                        factory = { context ->
-//                            PlayerView(context).also {
-//                                it.player = viewModel.player
-//                            }
-//                        },
-//                        update = {
-//                            when (lifecycle) {
-//                                Lifecycle.Event.ON_PAUSE -> {
-//                                    it.onPause()
-//                                    it.player?.pause()
-//                                }
-//                                Lifecycle.Event.ON_RESUME -> {
-//                                    it.onResume()
-//                                }
-//                                else -> Unit
-//                            }
-//                        },
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .aspectRatio(16 / 9f)
-//                    )
-                    val playerWrapper = PlayerWrapper(viewModel.player)
-                    val configuration = LocalConfiguration.current
-
-                    var playingIndex by remember {
-                        mutableStateOf(0)
-                    }
 
                     fun onTrailerChange(index: Int) {
                         playingIndex = index
@@ -150,13 +91,57 @@ class MainActivity : ComponentActivity() {
 
                     when (configuration.orientation) {
                         Configuration.ORIENTATION_PORTRAIT -> {
+
                             PortraitView(
                                 playerWrapper = playerWrapper,
                                 playingIndex = playingIndex,
                                 onTrailerChange = { index -> onTrailerChange(index) },
                                 onFullScreenToggle = {},
-                                navigateBack = {  }
+                                navigateBack = {  },
+                                modifier = Modifier.fillMaxWidth()
+                                    .height(240.dp)
                             )
+
+                            IconButton(onClick = {
+                                selectVideoLauncher.launch("video/*")
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.FileOpen,
+                                    contentDescription = "Select Video"
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                            IconButton(onClick = {
+                                activity.requestedOrientation = if (portrait.value) {
+                                    ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                                } else {
+                                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                                }
+
+                                // opposite the value of isPortrait
+                                portrait.value = !portrait.value
+                            }) {
+                                Icon(
+                                    imageVector = if (portrait.value) Icons.Default.Landscape else Icons.Default.Portrait,
+                                    contentDescription = "Select Video"
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                            LazyColumn {
+                                items(videoItems) { item ->
+                                    Text(
+                                        text = item.name,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                viewModel.playVideo(item.contentUri)
+                                            }
+                                            .padding(16.dp)
+                                    )
+                                }
+                            }
+
+
                         }
                         else -> {
                             LandscapeView(
@@ -167,6 +152,8 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
+
+
 
                 }
 
@@ -181,10 +168,11 @@ private fun PortraitView(
     playingIndex: Int,
     onTrailerChange: (Int) -> Unit,
     onFullScreenToggle: (isFullScreen: Boolean) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
-    Column(modifier = Modifier) {
+    Column(modifier = modifier) {
         PlayerView(
             modifier = Modifier.weight(1f, fill = true),
             playerWrapper = playerWrapper,
@@ -193,17 +181,6 @@ private fun PortraitView(
             onFullScreenToggle = onFullScreenToggle,
             navigateBack = navigateBack
         )
-        LazyColumn(
-            modifier = Modifier.weight(1f, fill = true),
-            content = {
-//                itemsIndexed(gameVideos.results) { index, trailer ->
-//                    ShowTrailers(
-//                        index = index,
-//                        trailer = trailer,
-//                        playingIndex = playingIndex,
-//                        onTrailerClicked = { newIndex -> onTrailerChange(newIndex) })
-//                }
-            })
     }
 }
 
